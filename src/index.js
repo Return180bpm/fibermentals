@@ -1,22 +1,34 @@
-import { useRef } from "react";
 import ReactDOM from "react-dom";
 import { Canvas, useFrame } from "@react-three/fiber";
 import "./index.css";
 
 const objects = [];
 
-function Sphere() {
+function MySphereGeometry() {
     const radius = 1;
     const widthSegments = 6;
     const heightSegments = 6;
-    const meshRef = useRef(null);
+    return (
+        <sphereBufferGeometry args={[radius, widthSegments, heightSegments]} />
+    );
+}
 
+function Sun() {
     const sphereMesh = (
-        <mesh ref={node => objects.push(node)} scale={[5, 5, 5]}>
-            <sphereBufferGeometry
-                args={[radius, widthSegments, heightSegments]}
-            />
+        <mesh ref={node => objects.push(node)} scale={5}>
+            <MySphereGeometry />
             <meshPhongMaterial emissive={0xffff00} />
+        </mesh>
+    );
+
+    return sphereMesh;
+}
+
+function Earth() {
+    const sphereMesh = (
+        <mesh ref={node => objects.push(node)} position-x={20}>
+            <MySphereGeometry />
+            <meshPhongMaterial emissive={0x1244aa} />
         </mesh>
     );
 
@@ -39,11 +51,27 @@ function Animate() {
 function App() {
     return (
         <div id="canvas-container">
-            <Canvas camera={{ fov: 90, position: [0, 1, 25] }}>
+            <Canvas
+                camera={{
+                    fov: 75,
+                    position: [0, 50, 0],
+                }}
+                onCreated={({ camera }) => {
+                    // camera.up.set(1, -10, -2);
+                    camera.lookAt(0, 0, 0);
+                }}
+            >
+                {/* <perspectiveCamera
+                    fov={90}
+                    position={[0, 1300, 0]}
+                    up={[0, 0, 1]}
+                    onUpdate={self => self.lookAt(10, 0, 0)}
+                /> */}
                 {/* <ambientLight /> */}
                 <pointLight args={[0xffffff, 3]} position={[0, 0, 0]} />
                 <Animate />
-                <Sphere />
+                <Sun />
+                <Earth />
                 <mesh position={[0, -10, 0]}>
                     <boxBufferGeometry args={[2, 2, 2]}></boxBufferGeometry>
                     <meshPhongMaterial />
