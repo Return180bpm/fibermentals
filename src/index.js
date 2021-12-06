@@ -13,26 +13,65 @@ function MySphereGeometry() {
     );
 }
 
+function SolarSystem() {
+    const solarSystem = (
+        <object3D ref={node => objects.push(node)}>
+            <Sun />
+            <EarthOrbit />
+        </object3D>
+    );
+    return solarSystem;
+}
+
 function Sun() {
-    const sphereMesh = (
+    const sunMesh = (
         <mesh ref={node => objects.push(node)} scale={5}>
             <MySphereGeometry />
             <meshPhongMaterial emissive={0xffff00} />
         </mesh>
     );
 
-    return sphereMesh;
+    return sunMesh;
+}
+
+function EarthOrbit() {
+    const earthOrbit = (
+        <object3D ref={node => objects.push(node)} position-x={30}>
+            <Earth />
+            <MoonOrbit />
+        </object3D>
+    );
+    return earthOrbit;
 }
 
 function Earth() {
-    const sphereMesh = (
-        <mesh ref={node => objects.push(node)} position-x={20}>
+    const earthMesh = (
+        <mesh ref={node => objects.push(node)}>
             <MySphereGeometry />
-            <meshPhongMaterial emissive={0x1244aa} />
+            <meshPhongMaterial color={0x2233ff} emissive={0x122244} />
         </mesh>
     );
 
-    return sphereMesh;
+    return earthMesh;
+}
+function MoonOrbit() {
+    const moonOrbit = (
+        <object3D ref={node => objects.push(node)} position-x={5}>
+            <Moon />
+        </object3D>
+    );
+    return moonOrbit;
+}
+
+function Moon() {
+    const moonMesh = (
+        <mesh scale={0.5}>
+            <MySphereGeometry />
+            <meshPhongMaterial color={0x888888} emissive={0xaa7722} />
+        </mesh>
+    );
+
+    return moonMesh;
 }
 
 function Animate() {
@@ -41,7 +80,7 @@ function Animate() {
 
         const time = clock.getElapsedTime();
         objects.forEach(obj => {
-            obj.rotation.y = time;
+            obj.rotation.y = time / 2;
         });
     });
 
@@ -53,29 +92,24 @@ function App() {
         <div id="canvas-container">
             <Canvas
                 camera={{
-                    fov: 75,
+                    fov: 90,
                     position: [0, 50, 0],
                 }}
                 onCreated={({ camera }) => {
-                    // camera.up.set(1, -10, -2);
+                    camera.up.set(0, 0, 1);
                     camera.lookAt(0, 0, 0);
                 }}
             >
-                {/* <perspectiveCamera
-                    fov={90}
-                    position={[0, 1300, 0]}
-                    up={[0, 0, 1]}
-                    onUpdate={self => self.lookAt(10, 0, 0)}
-                /> */}
                 {/* <ambientLight /> */}
                 <pointLight args={[0xffffff, 3]} position={[0, 0, 0]} />
+
+                <SolarSystem />
+
                 <Animate />
-                <Sun />
-                <Earth />
-                <mesh position={[0, -10, 0]}>
+                {/* <mesh position={[0, -10, 0]}>
                     <boxBufferGeometry args={[2, 2, 2]}></boxBufferGeometry>
                     <meshPhongMaterial />
-                </mesh>
+                </mesh> */}
             </Canvas>
         </div>
     );
