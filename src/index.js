@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import ReactDOM from "react-dom";
+import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import "./index.css";
 
@@ -12,8 +14,19 @@ function MySphereGeometry() {
         <sphereBufferGeometry args={[radius, widthSegments, heightSegments]} />
     );
 }
-
+function addAxesHelpers() {
+    objects.forEach(node => {
+        const axes = new THREE.AxesHelper(3);
+        axes.material.depthTest = false;
+        axes.renderOrder = 1;
+        node.add(axes);
+    });
+}
 function SolarSystem() {
+    useEffect(() => {
+        addAxesHelpers();
+    }, []);
+
     const solarSystem = (
         <object3D ref={node => objects.push(node)}>
             <Sun />
@@ -46,7 +59,7 @@ function EarthOrbit() {
 
 function Earth() {
     const earthMesh = (
-        <mesh ref={node => objects.push(node)}>
+        <mesh ref={node => objects.push(node)} scale={2}>
             <MySphereGeometry />
             <meshPhongMaterial color={0x2233ff} emissive={0x122244} />
         </mesh>
@@ -65,7 +78,7 @@ function MoonOrbit() {
 
 function Moon() {
     const moonMesh = (
-        <mesh scale={0.5}>
+        <mesh scale={1}>
             <MySphereGeometry />
             <meshPhongMaterial color={0x888888} emissive={0xaa7722} />
         </mesh>
@@ -92,7 +105,7 @@ function App() {
         <div id="canvas-container">
             <Canvas
                 camera={{
-                    fov: 90,
+                    fov: 75,
                     position: [0, 50, 0],
                 }}
                 onCreated={({ camera }) => {
