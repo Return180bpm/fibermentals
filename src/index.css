@@ -1,0 +1,9 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#canvas-container {
+    height: 100vh;
+    background-color: bisque;
+}
