@@ -14,6 +14,7 @@ function MySphereGeometry() {
         <sphereBufferGeometry args={[radius, widthSegments, heightSegments]} />
     );
 }
+
 function addAxesHelpers() {
     objects.forEach(node => {
         const axes = new THREE.AxesHelper(3);
@@ -22,16 +23,23 @@ function addAxesHelpers() {
         node.add(axes);
     });
 }
+
+function makeGrid(node, label, units) {
+    const size = 10;
+    const divisions = 10;
+
+    const helper = new THREE.GridHelper(size, divisions);
+}
 function SolarSystem() {
     useEffect(() => {
         addAxesHelpers();
     }, []);
 
     const solarSystem = (
-        <object3D ref={node => objects.push(node)}>
+        <group ref={node => objects.push(node)}>
             <Sun />
             <EarthOrbit />
-        </object3D>
+        </group>
     );
     return solarSystem;
 }
@@ -49,10 +57,10 @@ function Sun() {
 
 function EarthOrbit() {
     const earthOrbit = (
-        <object3D ref={node => objects.push(node)} position-x={30}>
+        <group ref={node => objects.push(node)} position-x={30}>
             <Earth />
             <MoonOrbit />
-        </object3D>
+        </group>
     );
     return earthOrbit;
 }
@@ -69,9 +77,9 @@ function Earth() {
 }
 function MoonOrbit() {
     const moonOrbit = (
-        <object3D ref={node => objects.push(node)} position-x={5}>
+        <group ref={node => objects.push(node)} position-x={5}>
             <Moon />
-        </object3D>
+        </group>
     );
     return moonOrbit;
 }
