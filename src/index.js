@@ -6,7 +6,7 @@ import GUI from "lil-gui";
 
 import "./index.css";
 
-const objects = [];
+const objects = {};
 const gui = new GUI();
 
 function MySphereGeometry() {
@@ -44,16 +44,18 @@ class AxisGridHelper {
     }
 }
 
-function addHelpers() {
-    objects.forEach(node => {
-        makeAxisGrid(node, node.name);
-    });
-}
-
 function makeAxisGrid(node, label, units) {
     const helper = new AxisGridHelper(node, units);
-    console.log(helper);
     gui.add(helper, "visible").name(label);
+}
+
+function addHelpers() {
+    makeAxisGrid(objects.solarSystem, "solarSystem");
+    makeAxisGrid(objects.sun, "sun");
+    makeAxisGrid(objects.earthOrbit, "earthOrbit");
+    makeAxisGrid(objects.earth, "earth");
+    makeAxisGrid(objects.moonOrbit, "moonOrbit");
+    makeAxisGrid(objects.moon, "moon");
 }
 
 function SolarSystem() {
@@ -62,7 +64,7 @@ function SolarSystem() {
     }, []);
 
     const solarSystem = (
-        <group ref={node => objects.push(node)} name="solarSystem">
+        <group ref={node => (objects[node.name] = node)} name="solarSystem">
             <Sun />
             <EarthOrbit />
         </group>
@@ -72,7 +74,7 @@ function SolarSystem() {
 
 function Sun() {
     const sunMesh = (
-        <mesh ref={node => objects.push(node)} scale={5} name="sun">
+        <mesh ref={node => (objects[node.name] = node)} scale={5} name="sun">
             <MySphereGeometry />
             <meshPhongMaterial emissive={0xffff00} />
         </mesh>
@@ -84,7 +86,7 @@ function Sun() {
 function EarthOrbit() {
     const earthOrbit = (
         <group
-            ref={node => objects.push(node)}
+            ref={node => (objects[node.name] = node)}
             position-x={30}
             name="earthOrbit"
         >
@@ -97,7 +99,7 @@ function EarthOrbit() {
 
 function Earth() {
     const earthMesh = (
-        <mesh ref={node => objects.push(node)} scale={2} name="earth">
+        <mesh ref={node => (objects[node.name] = node)} scale={2} name="earth">
             <MySphereGeometry />
             <meshPhongMaterial color={0x2233ff} emissive={0x122244} />
         </mesh>
@@ -107,7 +109,11 @@ function Earth() {
 }
 function MoonOrbit() {
     const moonOrbit = (
-        <group ref={node => objects.push(node)} position-x={5} name="moonOrbit">
+        <group
+            ref={node => (objects[node.name] = node)}
+            position-x={5}
+            name="moonOrbit"
+        >
             <Moon />
         </group>
     );
@@ -116,7 +122,7 @@ function MoonOrbit() {
 
 function Moon() {
     const moonMesh = (
-        <mesh scale={1} name="moon">
+        <mesh ref={node => (objects[node.name] = node)} scale={1} name="moon">
             <MySphereGeometry />
             <meshPhongMaterial color={0x888888} emissive={0xaa7722} />
         </mesh>
@@ -127,12 +133,10 @@ function Moon() {
 
 function Animate() {
     useFrame(({ clock }) => {
-        if (objects.length === 0) return null;
-
         const time = clock.getElapsedTime();
-        objects.forEach(obj => {
-            obj.rotation.y = time / 2;
-        });
+        for (const i in objects) {
+            objects[i].rotation.y = time / 2;
+        }
     });
 
     return null;
