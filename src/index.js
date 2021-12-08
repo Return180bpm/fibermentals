@@ -2,9 +2,12 @@ import { useEffect } from "react";
 import ReactDOM from "react-dom";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
+import GUI from "lil-gui";
+
 import "./index.css";
 
 const objects = [];
+const gui = new GUI();
 
 function MySphereGeometry() {
     const radius = 1;
@@ -15,28 +18,51 @@ function MySphereGeometry() {
     );
 }
 
-function addAxesHelpers() {
-    objects.forEach(node => {
+class AxisGridHelper {
+    constructor(node, units = 10) {
         const axes = new THREE.AxesHelper(3);
         axes.material.depthTest = false;
-        axes.renderOrder = 1;
+        axes.renderOrder = 2; // after the grid
         node.add(axes);
+
+        const grid = new THREE.GridHelper(units, units);
+        grid.material.depthTest = false;
+        grid.renderOrder = 1;
+        node.add(grid);
+
+        this.grid = grid;
+        this.axes = axes;
+        this.visible = false;
+    }
+    get visible() {
+        return this._visible;
+    }
+    set visible(v) {
+        this._visible = v;
+        this.grid.visible = v;
+        this.axes.visible = v;
+    }
+}
+
+function addHelpers() {
+    objects.forEach(node => {
+        makeAxisGrid(node, node.name);
     });
 }
 
-function makeGrid(node, label, units) {
-    const size = 10;
-    const divisions = 10;
-
-    const helper = new THREE.GridHelper(size, divisions);
+function makeAxisGrid(node, label, units) {
+    const helper = new AxisGridHelper(node, units);
+    console.log(helper);
+    gui.add(helper, "visible").name(label);
 }
+
 function SolarSystem() {
     useEffect(() => {
-        addAxesHelpers();
+        addHelpers();
     }, []);
 
     const solarSystem = (
-        <group ref={node => objects.push(node)}>
+        <group ref={node => objects.push(node)} name="solarSystem">
             <Sun />
             <EarthOrbit />
         </group>
@@ -46,7 +72,7 @@ function SolarSystem() {
 
 function Sun() {
     const sunMesh = (
-        <mesh ref={node => objects.push(node)} scale={5}>
+        <mesh ref={node => objects.push(node)} scale={5} name="sun">
             <MySphereGeometry />
             <meshPhongMaterial emissive={0xffff00} />
         </mesh>
@@ -57,7 +83,11 @@ function Sun() {
 
 function EarthOrbit() {
     const earthOrbit = (
-        <group ref={node => objects.push(node)} position-x={30}>
+        <group
+            ref={node => objects.push(node)}
+            position-x={30}
+            name="earthOrbit"
+        >
             <Earth />
             <MoonOrbit />
         </group>
@@ -67,7 +97,7 @@ function EarthOrbit() {
 
 function Earth() {
     const earthMesh = (
-        <mesh ref={node => objects.push(node)} scale={2}>
+        <mesh ref={node => objects.push(node)} scale={2} name="earth">
             <MySphereGeometry />
             <meshPhongMaterial color={0x2233ff} emissive={0x122244} />
         </mesh>
@@ -77,7 +107,7 @@ function Earth() {
 }
 function MoonOrbit() {
     const moonOrbit = (
-        <group ref={node => objects.push(node)} position-x={5}>
+        <group ref={node => objects.push(node)} position-x={5} name="moonOrbit">
             <Moon />
         </group>
     );
@@ -86,7 +116,7 @@ function MoonOrbit() {
 
 function Moon() {
     const moonMesh = (
-        <mesh scale={1}>
+        <mesh scale={1} name="moon">
             <MySphereGeometry />
             <meshPhongMaterial color={0x888888} emissive={0xaa7722} />
         </mesh>

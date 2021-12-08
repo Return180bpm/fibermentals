@@ -7076,6 +7076,11 @@
     "prelude-ls" "~1.1.2"
     "type-check" "~0.3.2"
 
+"lil-gui@^0.15.0":
+  "integrity" "sha512-S2KJSkudOHpw30wry2vrFVgcI+2W1nUIhSRUDhJJK7Mbs7jaMbTVd4ayKuSfarzx8ZonTS8xOxx40NmsF44tAw=="
+  "resolved" "https://registry.npmjs.org/lil-gui/-/lil-gui-0.15.0.tgz"
+  "version" "0.15.0"
+
 "lines-and-columns@^1.1.6":
   "integrity" "sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA="
   "resolved" "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.1.6.tgz"
